@@ -1,2 +1,2 @@
-# Ciclo4A_Grupo3_Resultados_Backend
+# Backend Resultados
 Repositorio especifico para la api de resultados
