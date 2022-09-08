@@ -6,6 +6,7 @@ import json
 from waitress import serve
 from Controladores.ControladorAdmMesas import ControladorAdmMesas
 from flask_sqlalchemy import SQLAlchemy
+from db import db
 
 
 app=Flask(__name__)
@@ -15,7 +16,7 @@ cors = CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/registraduria'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-db=SQLAlchemy(app)
+SQLAlchemy(app)
 
 
 def loadFileConfig():
@@ -23,6 +24,8 @@ def loadFileConfig():
      data = json.load(f)
      return data
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/",methods=['GET'])
 def test():
