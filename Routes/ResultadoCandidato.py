@@ -19,6 +19,8 @@ def create():
         return str(e), 404
     except IncorrectCreationAttributes as e:
         return str(e), 400
+    except MaxResultExceeded as e:
+        return str(e), 400
 
 
 @resultadocandidato.route("/resultadoCandidato", methods=['GET'])

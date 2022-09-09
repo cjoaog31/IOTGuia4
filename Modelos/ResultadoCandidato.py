@@ -12,15 +12,12 @@ class ResultadoCandidato(db.Model):
     candidato_id = db.Column(db.Integer, db.ForeignKey('candidato.id'), nullable=False)
     cantidad_votos = db.Column(db.Integer, nullable=False)
 
-    omited_attributes = ['query', 'query_class', 'metadata', 'registry', 'id', 'candidato', 'mesa']
+    omited_attributes = ['query', 'registry', 'metadata', 'id', 'mesa', 'candidato']
 
     def __init__(self, data, **kwargs):
         self.mesa_id = data["mesa_id"]
         self.candidato_id = data["candidato_id"]
         self.cantidad_votos = data["cantidad_votos"]
-
-    def __init__(self):
-        pass
 
     def dict_repr(self):
         return {
@@ -50,7 +47,6 @@ class ResultadoCandidato(db.Model):
             setattr(self, modification[0], modification[1])
         db.session.commit()
 
-
     def getAttributes(self):
         """
         Retorna la lista de atributos de la clase y la instancia
@@ -70,10 +66,11 @@ class ResultadoCandidato(db.Model):
         :return: list[(atributo, valor)] - Lista compuesta por los atributos de la clase y la instancia
         """
         resultado = []
-        for i in inspect.getmembers(ResultadoCandidato()):
+        for i in inspect.getmembers(ResultadoCandidato):
             if not i[0].startswith('_'):
-                if (not inspect.ismethod(i[1])) and i[0] != 'omited_attributes' and i[0] not in ResultadoCandidato.omited_attributes:
+                if (not callable(i[1])) and i[0] != 'omited_attributes' and i[0] not in ResultadoCandidato.omited_attributes:
                     resultado.append(i[0])
         return resultado
+
     def __repr__(self):
         return f"Mesa: {self.mesa.id}, Candidato: {self.candidato.nombre} {self.candidato.apellido}, Votos: {self.cantidad_votos}"

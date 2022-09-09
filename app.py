@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 cors = CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://wciidqnhsvfnmq:dd8c2bbe0035f0dfa14b8dd90839633bedcd4da132daabe44c74e42eefb7e945@ec2-107-23-76-12.compute-1.amazonaws.com:5432/dce9k9vbnl9ga0'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://rqiqprrhyiyetm:190e9d67244f6d8641e38d26b856f63b283c71c0b9d126503f2d13e66d8c99ab@ec2-35-168-122-84.compute-1.amazonaws.com:5432/db6l8628tb3o8s'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 SQLAlchemy(app)
 

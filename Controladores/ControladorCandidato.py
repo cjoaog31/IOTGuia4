@@ -42,10 +42,10 @@ class ControladorCandidato:
             raise IncorrectCreationAttributes(
                 f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Candidato.__getAttributes__()}")
 
-        if len(ControladorPartido.list()) == 0:
+        if len(ControladorPartido().list()) == 0:
             raise ObjectNotFound("No existen partidos en el sistema")
 
-        if ControladorPartido.get(data["partido_id"]) is None:
+        if ControladorPartido().get(data["partido_id"]) is None:
             raise ObjectNotFound("El partido enviado no existe")
 
         busqueda = Candidato.query.filter_by(cedula=data["cedula"]).first()

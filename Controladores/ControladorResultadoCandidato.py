@@ -43,23 +43,26 @@ class ControladorResultadoCandidato:
         if not validateRequiredCreationValues(data, ResultadoCandidato.__getAttributes__()):
             raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {ResultadoCandidato.__getAttributes__()}")
 
-        if len(ControladorMesa.list()) == 0:
+        if len(ControladorMesa().list()) == 0:
             raise ObjectNotFound("No existen mesas en el sistema")
-        if len(ControladorCandidato.list()) == 0:
+        if len(ControladorCandidato().list()) == 0:
             raise ObjectNotFound("No existen candidatos en el sistema")
 
         busqueda = ResultadoCandidato.query.filter_by(candidato_id=data["candidato_id"], mesa_id=data["mesa_id"]).first()
-        if busqueda is None:
+        if busqueda is not None:
             raise ObjectAlreadyDefined("Ya existe un resultado para este candidato en esta mesa en base de datos")
 
         id_mesa = data["mesa_id"]
         cantidadASubir = data["cantidad_votos"]
         cantidadActual = self.getActualTotalForTable(id_mesa)
-        mesa = ControladorMesa.query.get(id_mesa)
-        cantidadMaxima = mesa.cantidad_inscritos
-
-        if (cantidadActual + cantidadASubir) > cantidadMaxima:
-            raise MaxResultExceeded("Con la cantidad de votos suministrada se excede el numero de inscritos en la mesa")
+        try:
+            mesa = ControladorMesa().get(id_mesa)
+            cantidadMaxima = mesa['cantidad_inscritos']
+            if (cantidadActual + cantidadASubir) > cantidadMaxima:
+                raise MaxResultExceeded(
+                    "Con la cantidad de votos suministrada se excede el numero de inscritos en la mesa")
+        except ObjectNotFound as e:
+            pass
 
         resultadoCandidato = ResultadoCandidato(data)
         db.session.add(resultadoCandidato)
