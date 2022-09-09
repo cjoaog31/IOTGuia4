@@ -14,12 +14,17 @@ class Candidato(db.Model):
     partido_id = db.Column(db.Integer, db.ForeignKey('partido.id'), nullable=False)
     resultados = db.relationship('ResultadoCandidato', backref='candidato', lazy=True)
 
+    omited_attributes = ['resultados', 'query', 'query_class', 'metadata', 'registry', 'id', 'partido']
+
     def __init__(self, data, **kwargs):
         self.cedula = data["cedula"]
         self.numero_resolucion = data["numero_resolucion"]
         self.nombre = data["nombre"]
         self.apellido = data["apellido"]
         self.partido_id = data["partido_id"]
+
+    def __init__(self):
+        pass
 
     def dict_repr(self):
         return {
@@ -63,6 +68,21 @@ class Candidato(db.Model):
                 if not inspect.ismethod(i[1]):
                     resultado.append(i[0])
         return resultado
+
+    @staticmethod
+    def __getAttributes__():
+        """
+        Retorna la lista de atributos de la clase y la instancia
+        :return: list[(atributo, valor)] - Lista compuesta por los atributos de la clase y la instancia
+        """
+        resultado = []
+        for i in inspect.getmembers(Candidato()):
+            if not i[0].startswith('_'):
+                if (not inspect.ismethod(i[1])) and i[0] != 'omited_attributes' and i[0] not in Candidato.omited_attributes:
+                    resultado.append(i[0])
+        return resultado
+
+
 
     def __repr__(self):
         return f"Cedula: {self.cedula}, Nombre: {self.nombre} {self.apellido}, Partido: {self.partido.id}"

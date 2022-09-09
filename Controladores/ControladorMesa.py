@@ -1,6 +1,7 @@
 from Modelos.Mesa import Mesa
 from db import db
 from Controladores.CustomExceptions import *
+from Controladores.APIValidations import *
 
 
 class ControladorMesa:
@@ -36,6 +37,10 @@ class ControladorMesa:
         Crea una mesa con la informacion suministrada
         :param data: dict: diccionario con los datos requeridos para crear la mesa en base de datos
         """
+        if not validateRequiredCreationValues(data, Mesa.__getAttributes__()):
+            raise IncorrectCreationAttributes(
+                f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Mesa.__getAttributes__()}")
+
         busqueda = Mesa.query.filter_by(numero_mesa=data["numero_mesa"]).first()
         if busqueda is not None:
             raise ObjectAlreadyDefined("Ya existe una mesa con el mismo numero en base de datos")

@@ -16,3 +16,13 @@ class IncorrectAttribute(Exception):
 class DuplicateConstrainedValue(Exception):
     """Existe otro objeto con este valor unico"""
     pass
+
+
+class MaxResultExceeded(Exception):
+    """Se esta excediendo el numero de votos por mesa segun sus inscritos"""
+    pass
+
+
+class IncorrectCreationAttributes(Exception):
+    """Los atributos suministrados no son los esperados para esta peticion"""
+    pass

@@ -1,6 +1,8 @@
 from Modelos.Candidato import Candidato
+from Controladores.ControladorPartido import ControladorPartido
 from db import db
 from Controladores.CustomExceptions import *
+from Controladores.APIValidations import *
 
 
 class ControladorCandidato:
@@ -36,6 +38,16 @@ class ControladorCandidato:
         Crea un candidato con la informacion suministrada
         :param data: dict: diccionario con los datos requeridos para crear el candidato en base de datos
         """
+        if not validateRequiredCreationValues(data, Candidato.__getAttributes__()):
+            raise IncorrectCreationAttributes(
+                f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Candidato.__getAttributes__()}")
+
+        if len(ControladorPartido.list()) == 0:
+            raise ObjectNotFound("No existen partidos en el sistema")
+
+        if ControladorPartido.get(data["partido_id"]) is None:
+            raise ObjectNotFound("El partido enviado no existe")
+
         busqueda = Candidato.query.filter_by(cedula=data["cedula"]).first()
         if busqueda is not None:
             raise ObjectAlreadyDefined("Ya existe un candidato con la misma cedula en base de datos")

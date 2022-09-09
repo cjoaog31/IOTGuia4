@@ -15,6 +15,8 @@ def create():
         return "El objeto fue creado correctamente", 201
     except ObjectAlreadyDefined as e:
         return str(e), 404
+    except IncorrectCreationAttributes as e:
+        return str(e), 400
 
 
 @partido.route("/partidos", methods=['GET'])

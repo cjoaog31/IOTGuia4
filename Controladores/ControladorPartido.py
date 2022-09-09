@@ -1,6 +1,7 @@
 from Modelos.Partido import Partido
 from db import db
 from Controladores.CustomExceptions import *
+from Controladores.APIValidations import *
 
 
 class ControladorPartido:
@@ -36,6 +37,11 @@ class ControladorPartido:
         Crea un partido con la informacion suministrada
         :param data: dict: diccionario con los datos requeridos para crear el partido en base de datos
         """
+
+        if not validateRequiredCreationValues(data, Partido.__getAttributes__()):
+            raise IncorrectCreationAttributes(
+                f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Partido.__getAttributes__()}")
+
         busqueda = Partido.query.filter_by(nombre=data["nombre"]).first()
         if busqueda is not None:
             raise ObjectAlreadyDefined("Ya existe un partido con el mismo nombre en base de datos")

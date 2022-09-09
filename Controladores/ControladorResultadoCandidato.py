@@ -1,4 +1,7 @@
 from Modelos.ResultadoCandidato import ResultadoCandidato
+from Controladores.ControladorMesa import ControladorMesa
+from Controladores.ControladorCandidato import ControladorCandidato
+from Controladores.APIValidations import *
 from db import db
 from Controladores.CustomExceptions import *
 
@@ -36,9 +39,27 @@ class ControladorResultadoCandidato:
         Crea un resultado con la informacion suministrada
         :param data: dict: diccionario con los datos requeridos para crear el resultado en base de datos
         """
-        busqueda = ResultadoCandidato.query.filter_by(id_candidato=data["id_candidato"], id_mesa=data["id_mesa"]).first()
+
+        if not validateRequiredCreationValues(data, ResultadoCandidato.__getAttributes__()):
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {ResultadoCandidato.__getAttributes__()}")
+
+        if len(ControladorMesa.list()) == 0:
+            raise ObjectNotFound("No existen mesas en el sistema")
+        if len(ControladorCandidato.list()) == 0:
+            raise ObjectNotFound("No existen candidatos en el sistema")
+
+        busqueda = ResultadoCandidato.query.filter_by(candidato_id=data["candidato_id"], mesa_id=data["mesa_id"]).first()
         if busqueda is None:
             raise ObjectAlreadyDefined("Ya existe un resultado para este candidato en esta mesa en base de datos")
+
+        id_mesa = data["mesa_id"]
+        cantidadASubir = data["cantidad_votos"]
+        cantidadActual = self.getActualTotalForTable(id_mesa)
+        mesa = ControladorMesa.query.get(id_mesa)
+        cantidadMaxima = mesa.cantidad_inscritos
+
+        if (cantidadActual + cantidadASubir) > cantidadMaxima:
+            raise MaxResultExceeded("Con la cantidad de votos suministrada se excede el numero de inscritos en la mesa")
 
         resultadoCandidato = ResultadoCandidato(data)
         db.session.add(resultadoCandidato)
@@ -63,8 +84,15 @@ class ControladorResultadoCandidato:
             raise AttributeError("No se ha suministrado el id para la modificacion")
         if resultado is None:
             raise ObjectNotFound("No existe un resultado con el id suministrado")
-        if "id_candidato" in data.keys() and "id_mesa" in data.keys():
-            resultado = ResultadoCandidato.query.filter_by(id_candidato=data["id_candidato"], id_mesa=data["id_mesa"]).first()
+        if "candidato_id" in data.keys() and "mesa_id" in data.keys():
+            resultado = ResultadoCandidato.query.filter_by(candidato_id=data["candidato_id"], mesa_id=data["mesa_id"]).first()
             if resultado is not None:
                 raise DuplicateConstrainedValue("Ya existe un resultado para este candidato y esta mesa en la base de datos, no es posible realizar esta modificacion")
         resultado.modify(data)
+
+    def getActualTotalForTable(self, id: int):
+        resultado = ResultadoCandidato.query.filter_by(mesa_id=id)
+        cantidad = 0
+        for i in resultado:
+            cantidad += i.cantidad_votos
+        return cantidad

@@ -15,6 +15,10 @@ def create():
         return "El objeto fue creado correctamente", 201
     except ObjectAlreadyDefined as e:
         return str(e), 404
+    except ObjectNotFound as e:
+        return str(e), 404
+    except IncorrectCreationAttributes as e:
+        return str(e), 400
 
 
 @resultadocandidato.route("/resultadoCandidato", methods=['GET'])

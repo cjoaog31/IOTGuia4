@@ -11,9 +11,14 @@ class Partido(db.Model):
     lema = db.Column(db.String(255))
     candidatos = db.relationship('Candidato', backref = 'partido', lazy=True)
 
+    omited_attributes = ['candidatos', 'query', 'query_class', 'metadata', 'registry', 'id', 'partido']
+
     def __init__(self, data, **kwargs):
         self.nombre = data["nombre"]
         self.lema = data["lema"]
+
+    def __init__(self):
+        pass
 
     def dict_repr(self):
         return {
@@ -51,6 +56,19 @@ class Partido(db.Model):
         for i in inspect.getmembers(self):
             if not i[0].startswith('_'):
                 if not inspect.ismethod(i[1]):
+                    resultado.append(i[0])
+        return resultado
+
+    @staticmethod
+    def __getAttributes__():
+        """
+        Retorna la lista de atributos de la clase y la instancia
+        :return: list[(atributo, valor)] - Lista compuesta por los atributos de la clase y la instancia
+        """
+        resultado = []
+        for i in inspect.getmembers(Partido()):
+            if not i[0].startswith('_'):
+                if (not inspect.ismethod(i[1])) and i[0] != 'omited_attributes' and i[0] not in Partido.omited_attributes:
                     resultado.append(i[0])
         return resultado
 
