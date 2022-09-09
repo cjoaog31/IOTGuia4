@@ -1,6 +1,6 @@
 from Modelos.Candidato import Candidato
 from db import db
-from CustomExceptions import *
+from Controladores.CustomExceptions import *
 
 
 class ControladorCandidato:
@@ -36,8 +36,8 @@ class ControladorCandidato:
         Crea un candidato con la informacion suministrada
         :param data: dict: diccionario con los datos requeridos para crear el candidato en base de datos
         """
-        busqueda = Candidato.filter_by(id=data["cedula"]).first()
-        if busqueda is None:
+        busqueda = Candidato.query.filter_by(cedula=data["cedula"]).first()
+        if busqueda is not None:
             raise ObjectAlreadyDefined("Ya existe un candidato con la misma cedula en base de datos")
 
         candidato = Candidato(data)
@@ -64,7 +64,7 @@ class ControladorCandidato:
         if resultado is None:
             raise ObjectNotFound("No existe un candidato con el id suministrado")
         if "cedula" in data.keys():
-            candidatoConCedula = Candidato.query.filter(cedula=data["cedula"]).first()
+            candidatoConCedula = Candidato.query.filter_by(cedula=data["cedula"]).first()
             if candidatoConCedula is not None:
-                raise DuplicateConstrainedValue("Ya existe un usuario con esta cedula en la base de datos, no es posible realizar esta modificacion")
+                raise DuplicateConstrainedValue("Ya existe un candidato con esta cedula en la base de datos, no es posible realizar esta modificacion")
         resultado.modify(data)

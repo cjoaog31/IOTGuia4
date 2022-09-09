@@ -1,13 +1,13 @@
 from flask import jsonify, Blueprint, request
-from Controladores.ControladorCandidato import ControladorCandidato
+from Controladores.ControladorPartido import ControladorPartido
 from Controladores.CustomExceptions import *
 
-controlador = ControladorCandidato()
+controlador = ControladorPartido()
 
-candidato = Blueprint('candidato', __name__)
+partido = Blueprint('partido', __name__)
 
 
-@candidato.route("/candidatos", methods=['POST'])
+@partido.route("/partidos", methods=['POST'])
 def create():
     data = request.get_json()
     try:
@@ -17,26 +17,26 @@ def create():
         return str(e), 404
 
 
-@candidato.route("/candidatos", methods=['GET'])
+@partido.route("/partidos", methods=['GET'])
 def listar():
     return jsonify(controlador.list())
 
 
-@candidato.route("/candidatos/<id>", methods=['GET'])
+@partido.route("/partidos/<id>", methods=['GET'])
 def get(id):
     try:
-        candidato = controlador.get(id)
-        return jsonify(candidato), 200
+        partido = controlador.get(id)
+        return jsonify(partido), 200
     except ObjectNotFound as e:
         return str(e), 404
 
 
-@candidato.route("/candidatos", methods=['PUT'])
+@partido.route("/partidos", methods=['PUT'])
 def modify():
     data = request.get_json()
     try:
         controlador.modify(data)
-        return "Se ha modificado el candidato correctamente", 200
+        return "Se ha modificado el partido correctamente", 200
     except ObjectNotFound as e:
         return str(e), 404
     except DuplicateConstrainedValue as e:
@@ -45,10 +45,10 @@ def modify():
         return str(e), 400
 
 
-@candidato.route("/candidatos/<id>", methods=['DELETE'])
+@partido.route("/partidos/<id>", methods=['DELETE'])
 def delete(id):
     try:
         controlador.delete(id)
-        return "Se ha eliminado el candidato correctamente", 200
+        return "Se ha eliminado el partido correctamente", 200
     except ObjectNotFound as e:
         return str(e), 404

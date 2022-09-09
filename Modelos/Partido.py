@@ -3,37 +3,28 @@ from db import db
 from Controladores.CustomExceptions import IncorrectAttribute
 
 
-class Candidato(db.Model):
-    __tablename__ = "candidato"
+class Partido(db.Model):
+    __tablename__ = "partido"
 
     id = db.Column(db.Integer, primary_key=True)
-    cedula = db.Column(db.Integer, unique=True, nullable=False)
-    numero_resolucion = db.Column(db.Integer, nullable=False)
-    nombre = db.Column(db.String(30))
-    apellido = db.Column(db.String(50))
-    partido_id = db.Column(db.Integer, db.ForeignKey('partido.id'), nullable=False)
-    resultados = db.relationship('ResultadoCandidato', backref='candidato', lazy=True)
+    nombre = db.Column(db.String(50), unique=True)
+    lema = db.Column(db.String(255))
+    candidatos = db.relationship('Candidato', backref = 'partido', lazy=True)
 
     def __init__(self, data, **kwargs):
-        self.cedula = data["cedula"]
-        self.numero_resolucion = data["numero_resolucion"]
         self.nombre = data["nombre"]
-        self.apellido = data["apellido"]
-        self.partido_id = data["partido_id"]
+        self.lema = data["lema"]
 
     def dict_repr(self):
         return {
             "id": self.id,
-            "cedula": self.cedula,
-            "numero_resolucion": self.numero_resolucion,
             "nombre": self.nombre,
-            "apellido": self.apellido,
-            "partido": self.partido.nombre
+            "lema": self.lema
         }
 
     def modify(self, data: dict):
         """
-        Modifica los atributos de un candidato según los valores recibidos
+        Modifica los atributos de un partido según los valores recibidos
         :param data: dict - Diccionario con los datos a modificar
         """
         keys = data.keys()
@@ -41,7 +32,7 @@ class Candidato(db.Model):
         toDoModifications = []
         for key in keys:
             if key not in atributos:
-                raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para el candidato")
+                raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para el partido")
             currentValue = getattr(self, key)
             newValue = data[key]
             if currentValue != newValue:
@@ -50,7 +41,6 @@ class Candidato(db.Model):
         for modification in toDoModifications:
             setattr(self, modification[0], modification[1])
         db.session.commit()
-
 
     def getAttributes(self):
         """
@@ -65,4 +55,4 @@ class Candidato(db.Model):
         return resultado
 
     def __repr__(self):
-        return f"Cedula: {self.cedula}, Nombre: {self.nombre} {self.apellido}, Partido: {self.partido.id}"
+        return f"Nombre: {self.nombre}, Lema: {self.lema}"
