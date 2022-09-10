@@ -1,6 +1,6 @@
 import inspect
 from db import db
-from Controladores.CustomExceptions import IncorrectAttribute
+from Controladores.CustomExceptions import IncorrectAttribute, IncorrectValue
 
 
 class Candidato(db.Model):
@@ -17,10 +17,26 @@ class Candidato(db.Model):
     omited_attributes = ['resultados', 'query', 'registry', 'metadata', 'id', 'partido']
 
     def __init__(self, data, **kwargs):
-        self.cedula = data["cedula"]
-        self.numero_resolucion = data["numero_resolucion"]
-        self.nombre = data["nombre"]
-        self.apellido = data["apellido"]
+        cc = data["cedula"]
+        resolucion = data["numero_resolucion"]
+        name = data["nombre"]
+        lastName = data["apellido"]
+
+        if cc <= 0:
+            raise IncorrectValue("La cedula no puede ser un numero negativo o 0")
+        if type(resolucion) is str:
+            raise IncorrectValue("La resolucion debe ser un numero")
+        if resolucion <= 0:
+            raise IncorrectValue("La resolucion no puede ser un numero negativo o 0")
+        if len(name) > 30 or name == "":
+            raise IncorrectValue("El nombre no puede contener más de 30 caracteres o ser vacio")
+        if len(name) > 50 or name == "":
+            raise IncorrectValue("El apellido no puede contener más de 50 caracteres o ser vacio")
+
+        self.cedula = cc
+        self.numero_resolucion = resolucion
+        self.nombre = name
+        self.apellido = lastName
         self.partido_id = data["partido_id"]
 
     def dict_repr(self):
@@ -41,6 +57,24 @@ class Candidato(db.Model):
         keys = data.keys()
         atributos = self.getAttributes()
         toDoModifications = []
+
+        if "cedula" in keys:
+            cc = data["cedula"]
+            if cc <= 0:
+                raise IncorrectValue("La cedula no puede ser un numero negativo o 0")
+        if "numero_resolucion" in keys:
+            resolucion = data["numero_resolucion"]
+            if type(resolucion) is str:
+                raise IncorrectValue("La resolucion debe ser un numero")
+        if "nombre" in keys:
+            name = data["nombre"]
+            if len(name) > 30 or name == "":
+                raise IncorrectValue("El nombre no puede contener más de 30 caracteres o ser vacio")
+        if "apellido" in keys:
+            lastName = data["apellido"]
+            if len(name) > 50 or name == "":
+                raise IncorrectValue("El apellido no puede contener más de 50 caracteres o ser vacio")
+
         for key in keys:
             if key not in atributos:
                 raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para el candidato")

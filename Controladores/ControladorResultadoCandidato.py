@@ -30,7 +30,7 @@ class ControladorResultadoCandidato:
         :raises: ObjectNotFound - En caso de que el objeto no sea encontrado
         """
         resultado = ResultadoCandidato.query.get(id)
-        if resultado is not None:
+        if resultado is None:
             raise ObjectNotFound("No existe un resultado con el id suministrado")
         return resultado.dict_repr()
 
@@ -56,8 +56,8 @@ class ControladorResultadoCandidato:
         cantidadASubir = data["cantidad_votos"]
         cantidadActual = self.getActualTotalForTable(id_mesa)
         try:
-            mesa = ControladorMesa().get(id_mesa)
-            cantidadMaxima = mesa['cantidad_inscritos']
+            mesa = ControladorMesa().getMaxVotantes(id_mesa)
+            cantidadMaxima = mesa
             if (cantidadActual + cantidadASubir) > cantidadMaxima:
                 raise MaxResultExceeded(
                     "Con la cantidad de votos suministrada se excede el numero de inscritos en la mesa")
@@ -80,17 +80,54 @@ class ControladorResultadoCandidato:
         db.session.commit()
 
     def modify(self, data):
+
+        #Validacion del data frame contenga solamente llaves permitidas
+        if not validatePosibleModificationValues(data, ResultadoCandidato.__getAttributes__()):
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\n")
+
+        #Validacion de que contenga el ID el cual es requerido para cualquier modificacion
         try:
             id = data.pop("id")
             resultado = ResultadoCandidato.query.get(id)
         except KeyError:
             raise AttributeError("No se ha suministrado el id para la modificacion")
+
+        #Validacion de la existencia del objeto que se desea modificar
         if resultado is None:
             raise ObjectNotFound("No existe un resultado con el id suministrado")
-        if "candidato_id" in data.keys() and "mesa_id" in data.keys():
-            resultado = ResultadoCandidato.query.filter_by(candidato_id=data["candidato_id"], mesa_id=data["mesa_id"]).first()
-            if resultado is not None:
-                raise DuplicateConstrainedValue("Ya existe un resultado para este candidato y esta mesa en la base de datos, no es posible realizar esta modificacion")
+
+        #Validacion de que no exista ya una combinacion mesa-candidato en caso de que se desee cambiar alguno de estos valores
+        cambiaMesa = True
+        cambiaCandidato = False
+        if "candidato_id" in data.keys():
+            candidato_id = data["candidato_id"]
+            if data["candidato_id"] == resultado.candidato_id: cambiaCandidato = False
+        else:
+            candidato_id = resultado.candidato.id
+        if "mesa_id" in data.keys():
+            mesa_id = data["mesa_id"]
+            if data["mesa_id"] == resultado.mesa_id: cambiaMesa = False
+        else:
+            mesa_id = resultado.mesa.id
+        resultadoBusqueda = ResultadoCandidato.query.filter_by(candidato_id=candidato_id,
+                                                               mesa_id=mesa_id).first()
+        if resultadoBusqueda is not None and (cambiaMesa or cambiaCandidato):
+            raise DuplicateConstrainedValue("Ya existe un resultado para este candidato y esta mesa en la base de datos, no es posible realizar esta modificacion")
+
+        #validacion cantidad de votos no excede capacidad de la mesa destino
+        if "cantidad_votos" in data.keys():
+            cantidadASubir = data["cantidad_votos"]
+        else:
+            cantidadASubir = resultado.cantidad_votos
+        cantidadActual = self.getActualTotalForTable(mesa_id)
+        maximo_votacion = ControladorMesa().getMaxVotantes(mesa_id)
+        if cambiaMesa:
+            total_votos = cantidadActual + cantidadASubir
+        else:
+            total_votos = cantidadActual - resultado.cantidad_votos + cantidadASubir
+        if total_votos > maximo_votacion:
+            raise MaxResultExceeded("Con esta cantidad de votos se excede la cantidad de votantes inscritos en la mesa")
+
         resultado.modify(data)
 
     def getActualTotalForTable(self, id: int):

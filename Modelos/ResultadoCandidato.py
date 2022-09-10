@@ -1,6 +1,6 @@
 import inspect
 from db import db
-from Controladores.CustomExceptions import IncorrectAttribute
+from Controladores.CustomExceptions import IncorrectAttribute, IncorrectValue
 
 
 class ResultadoCandidato(db.Model):
@@ -15,9 +15,13 @@ class ResultadoCandidato(db.Model):
     omited_attributes = ['query', 'registry', 'metadata', 'id', 'mesa', 'candidato']
 
     def __init__(self, data, **kwargs):
+        cantidadVotos = data["cantidad_votos"]
+        if cantidadVotos < 0:
+            raise IncorrectValue("La cantidad de votos no puede ser negativa")
+
         self.mesa_id = data["mesa_id"]
         self.candidato_id = data["candidato_id"]
-        self.cantidad_votos = data["cantidad_votos"]
+        self.cantidad_votos = cantidadVotos
 
     def dict_repr(self):
         return {
@@ -35,6 +39,11 @@ class ResultadoCandidato(db.Model):
         keys = data.keys()
         atributos = self.getAttributes()
         toDoModifications = []
+
+        if "cantidad_votos" in keys:
+            cantidadVotos = data["cantidad_votos"]
+            if cantidadVotos < 0:
+                raise IncorrectValue("La cantidad de votos no puede ser negativa")
         for key in keys:
             if key not in atributos:
                 raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para los resultados")

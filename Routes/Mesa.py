@@ -17,6 +17,8 @@ def create():
         return str(e), 404
     except IncorrectCreationAttributes as e:
         return str(e), 400
+    except IncorrectValue as e:
+        return str(e), 400
 
 
 @mesa.route("/mesas", methods=['GET'])
@@ -45,7 +47,8 @@ def modify():
         return str(e), 400
     except AttributeError as e:
         return str(e), 400
-
+    except IncorrectValue as e:
+        return str(e), 400
 
 @mesa.route("/mesas/<id>", methods=['DELETE'])
 def delete(id):

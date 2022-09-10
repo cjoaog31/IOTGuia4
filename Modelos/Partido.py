@@ -1,6 +1,6 @@
 import inspect
 from db import db
-from Controladores.CustomExceptions import IncorrectAttribute
+from Controladores.CustomExceptions import IncorrectAttribute, IncorrectValue
 
 
 class Partido(db.Model):
@@ -14,8 +14,16 @@ class Partido(db.Model):
     omited_attributes = ['candidatos', 'query', 'registry', 'metadata', 'id']
 
     def __init__(self, data, **kwargs):
-        self.nombre = data["nombre"]
-        self.lema = data["lema"]
+        name = data["nombre"]
+        lemaPartido = data["lema"]
+
+        if len(name) > 50 or name == "":
+            raise IncorrectValue("El nombre del partido no puede superar los 50 caracteres o ser vacio")
+        if len(lemaPartido) > 50 or name == "":
+            raise IncorrectValue("El lema del partido no puede superar los 255 caracteres o ser vacio")
+
+        self.nombre = name
+        self.lema = lemaPartido
 
     def dict_repr(self):
         return {
@@ -32,6 +40,16 @@ class Partido(db.Model):
         keys = data.keys()
         atributos = self.getAttributes()
         toDoModifications = []
+
+        if "nombre" in keys:
+            name = data["nombre"]
+            if len(name) > 50 or name == "":
+                raise IncorrectValue("El nombre del partido no puede superar los 50 caracteres o ser vacio")
+        if "lema" in keys:
+            lemaPartido = data["lema"]
+            if len(lemaPartido) > 50 or name == "":
+                raise IncorrectValue("El lema del partido no puede superar los 255 caracteres o ser vacio")
+
         for key in keys:
             if key not in atributos:
                 raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para el partido")

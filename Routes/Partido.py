@@ -17,6 +17,8 @@ def create():
         return str(e), 404
     except IncorrectCreationAttributes as e:
         return str(e), 400
+    except IncorrectValue as e:
+        return str(e), 400
 
 
 @partido.route("/partidos", methods=['GET'])
@@ -44,6 +46,8 @@ def modify():
     except DuplicateConstrainedValue as e:
         return str(e), 400
     except AttributeError as e:
+        return str(e), 400
+    except IncorrectValue as e:
         return str(e), 400
 
 

@@ -1,7 +1,7 @@
 import inspect
 
 from db import db
-from Controladores.CustomExceptions import IncorrectAttribute
+from Controladores.CustomExceptions import IncorrectAttribute, IncorrectValue
 
 
 class Mesa(db.Model):
@@ -15,8 +15,16 @@ class Mesa(db.Model):
     omited_attributes = ['id', 'resultados', 'query', 'registry', 'metadata']
 
     def __init__(self, data, **kwargs):
-        self.numero_mesa = data["numero_mesa"]
-        self.cantidad_inscritos = data["cantidad_inscritos"]
+        numeroMesa = data["numero_mesa"]
+        cantidadInscritos = data["cantidad_inscritos"]
+
+        if numeroMesa <= 0:
+            raise IncorrectValue("El numero de mesa no puede ser menor a 1")
+        if cantidadInscritos <= 0:
+            raise IncorrectValue("El numero de inscritos no puede ser menor a 1")
+
+        self.numero_mesa = numeroMesa
+        self.cantidad_inscritos = cantidadInscritos
 
     def dict_repr(self):
         return {
@@ -33,6 +41,16 @@ class Mesa(db.Model):
         keys = data.keys()
         atributos = self.getAttributes()
         toDoModifications = []
+
+        if "numero_mesa" in keys:
+            numeroMesa = data["numero_mesa"]
+            if numeroMesa <= 0:
+                raise IncorrectValue("El numero de mesa no puede ser menor a 1")
+        if "cantidad_inscritos" in keys():
+            cantidadInscritos = data["cantidad_inscritos"]
+            if cantidadInscritos <= 0:
+                raise IncorrectValue("El numero de inscritos no puede ser menor a 1")
+
         for key in keys:
             if key not in atributos:
                 raise IncorrectAttribute(f"El atributo {key} no se encuentra definido para la mesa")

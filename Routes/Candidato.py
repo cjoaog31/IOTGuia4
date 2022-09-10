@@ -19,6 +19,8 @@ def create():
         return str(e), 404
     except IncorrectCreationAttributes as e:
         return str(e), 400
+    except IncorrectValue as e:
+        return str(e), 400
 
 
 @candidato.route("/candidatos", methods=['GET'])
@@ -46,6 +48,10 @@ def modify():
     except DuplicateConstrainedValue as e:
         return str(e), 400
     except AttributeError as e:
+        return str(e), 400
+    except IncorrectCreationAttributes as e:
+        return str(e), 400
+    except IncorrectValue as e:
         return str(e), 400
 
 

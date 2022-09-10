@@ -7,6 +7,7 @@ from Routes.Candidato import candidato
 from Routes.Partido import partido
 from Routes.Mesa import mesa
 from Routes.ResultadoCandidato import resultadocandidato
+from Routes.Reportes import reportes
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -22,7 +23,7 @@ app.register_blueprint(candidato)
 app.register_blueprint(partido)
 app.register_blueprint(mesa)
 app.register_blueprint(resultadocandidato)
-
+app.register_blueprint(reportes)
 
 def loadFileConfig():
     with open('config.json') as f:

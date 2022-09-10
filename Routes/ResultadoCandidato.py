@@ -21,6 +21,8 @@ def create():
         return str(e), 400
     except MaxResultExceeded as e:
         return str(e), 400
+    except IncorrectValue as e:
+        return str(e), 400
 
 
 @resultadocandidato.route("/resultadoCandidato", methods=['GET'])
@@ -48,6 +50,12 @@ def modify():
     except DuplicateConstrainedValue as e:
         return str(e), 400
     except AttributeError as e:
+        return str(e), 400
+    except MaxResultExceeded as e:
+        return str(e), 400
+    except IncorrectCreationAttributes as e:
+        return str(e), 400
+    except IncorrectValue as e:
         return str(e), 400
 
 

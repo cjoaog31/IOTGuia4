@@ -73,3 +73,15 @@ class ControladorMesa:
             if mesaConNumero is not None:
                 raise DuplicateConstrainedValue("Ya existe una mesa con este numero de mesa en la base de datos, no es posible realizar esta modificacion")
         resultado.modify(data)
+
+    def getMaxVotantes(self, id):
+        """
+        Obtiene la cantidad de registrados de una mesa identificada con el id proporcionado
+        :param id: id de la mesa a buscar en base de datos
+        :return: int - Cantidad de personas inscritas en la mesa en especifico
+        :raises: ObjectNotFound - En caso de que el objeto no sea encontrado
+        """
+        resultado = Mesa.query.get(id)
+        if resultado is None:
+            raise ObjectNotFound("No existe una mesa con el id suministrado")
+        return resultado.cantidad_inscritos

@@ -12,3 +12,11 @@ def validateRequiredCreationValues(data: dict, attributes: list):
 
     return True
 
+
+def validatePosibleModificationValues(data: dict, attributes: list):
+    keys = data.keys()
+    for key in keys:
+        if key not in attributes and key != "id":
+            return False
+
+    return True

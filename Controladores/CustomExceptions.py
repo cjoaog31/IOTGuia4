@@ -26,3 +26,7 @@ class MaxResultExceeded(Exception):
 class IncorrectCreationAttributes(Exception):
     """Los atributos suministrados no son los esperados para esta peticion"""
     pass
+
+class IncorrectValue(Exception):
+    """El valos ingresado para uno de los atributos no se encuentra dentro de los parametros aceptados"""
+    pass
