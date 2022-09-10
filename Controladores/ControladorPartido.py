@@ -62,6 +62,11 @@ class ControladorPartido:
         db.session.commit()
 
     def modify(self, data):
+        # Validacion del data frame contenga solamente llaves permitidas
+        if not validatePosibleModificationValues(data, Partido.__getAttributes__()):
+            print(Partido.__getAttributes__())
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\nDebe contener solamente un subgrupo de los siguientes: {Partido.__getAttributes__()} aparte del id del objeto")
+
         try:
             id = data.pop("id")
             resultado = Partido.query.get(id)

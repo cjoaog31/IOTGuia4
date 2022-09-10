@@ -16,7 +16,7 @@ class ControladorRepostes:
     def __getDetalleCandidato__(self, candidato: Candidato):
         listaResultados = candidato.resultados
         respuesta = {}
-        respuesta["id"] = candidato.id
+        #respuesta["id"] = candidato.id
         respuesta["nombre_completo"] = candidato.nombre + " " + candidato.apellido
         respuesta["partido"] = candidato.partido.nombre
         listaResultadosDiccionarios = []
@@ -48,7 +48,7 @@ class ControladorRepostes:
 
     def __getDetalleMesa__(self, mesa: Mesa):
         resultado = {}
-        resultado["id"] = mesa.id
+        resultado["numero_mesa"] = mesa.numero_mesa
         total_votos = 0
         listaResultados = mesa.resultados
         for res in listaResultados:
@@ -76,7 +76,8 @@ class ControladorRepostes:
         for mesa in listaMesas:
             resultado.append(self.__getDetalleMesa__(mesa))
         listaOrganizada = sorted(resultado, key=lambda x: x[1])
-        return listaOrganizada
+        listaSinTuplas = self.__removerTuplas__(listaOrganizada)
+        return listaSinTuplas
 
     def getPartidosDetalleMesa(self):
 

@@ -49,6 +49,8 @@ def modify():
         return str(e), 400
     except IncorrectValue as e:
         return str(e), 400
+    except IncorrectCreationAttributes as e:
+        return str(e), 400
 
 
 @partido.route("/partidos/<id>", methods=['DELETE'])

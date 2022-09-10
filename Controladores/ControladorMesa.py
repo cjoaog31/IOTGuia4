@@ -39,7 +39,7 @@ class ControladorMesa:
         """
         if not validateRequiredCreationValues(data, Mesa.__getAttributes__()):
             raise IncorrectCreationAttributes(
-                f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Mesa.__getAttributes__()}")
+                f"Se suministraron los atributos incorrectos para este endpoint.\nSe esperan los siguientes: {Mesa.__getAttributes__()}")
 
         busqueda = Mesa.query.filter_by(numero_mesa=data["numero_mesa"]).first()
         if busqueda is not None:
@@ -61,6 +61,11 @@ class ControladorMesa:
         db.session.commit()
 
     def modify(self, data):
+        # Validacion del data frame contenga solamente llaves permitidas
+        if not validatePosibleModificationValues(data, Mesa.__getAttributes__()):
+            print(Mesa.__getAttributes__())
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\nDebe contener solamente un subgrupo de los siguientes: {Mesa.__getAttributes__()} aparte del id del objeto")
+
         try:
             id = data.pop("id")
             resultado = Mesa.query.get(id)

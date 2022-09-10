@@ -40,7 +40,7 @@ class ControladorCandidato:
         """
         if not validateRequiredCreationValues(data, Candidato.__getAttributes__()):
             raise IncorrectCreationAttributes(
-                f"Se suministraron los atributos incorrectos para este endpoint.\n Se esperan los siguientes: {Candidato.__getAttributes__()}")
+                f"Se suministraron los atributos incorrectos para este endpoint.\nSe esperan los siguientes: {Candidato.__getAttributes__()}")
 
         if len(ControladorPartido().list()) == 0:
             raise ObjectNotFound("No existen partidos en el sistema")
@@ -68,6 +68,10 @@ class ControladorCandidato:
         db.session.commit()
 
     def modify(self, data):
+        # Validacion del data frame contenga solamente llaves permitidas
+        if not validatePosibleModificationValues(data, Candidato.__getAttributes__()):
+            print(Candidato.__getAttributes__())
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\nDebe contener solamente un subgrupo de los siguientes: {Candidato.__getAttributes__()} aparte del id del objeto")
         try:
             id = data.pop("id")
             resultado = Candidato.query.get(id)

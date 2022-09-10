@@ -83,7 +83,8 @@ class ControladorResultadoCandidato:
 
         #Validacion del data frame contenga solamente llaves permitidas
         if not validatePosibleModificationValues(data, ResultadoCandidato.__getAttributes__()):
-            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\n")
+            print(ResultadoCandidato.__getAttributes__())
+            raise IncorrectCreationAttributes(f"Se suministraron los atributos incorrectos para este endpoint.\nDebe contener solamente un subgrupo de los siguientes: {ResultadoCandidato.__getAttributes__()} aparte del id del objeto")
 
         #Validacion de que contenga el ID el cual es requerido para cualquier modificacion
         try:
