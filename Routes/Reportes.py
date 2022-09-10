@@ -10,7 +10,7 @@ reportes = Blueprint('reportes', __name__)
 @reportes.route("/detalladoCandidatos", methods=['GET'])
 def detalleCandidatos():
     respuesta = controlador.getDetalleCandidatos()
-    if respuesta is None:
+    if len(respuesta) == 0:
         return "No se cuenta con resultados en el momento", 200
     return jsonify(respuesta), 200
 
@@ -18,20 +18,20 @@ def detalleCandidatos():
 @reportes.route("/participacionMesas", methods=['GET'])
 def participacionMesas():
     respuesta = controlador.getParticipacionMesas()
-    if respuesta is None:
+    if len(respuesta) == 0:
         return "No se cuenta con resultados en el momento", 200
     return jsonify(respuesta), 200
 
 @reportes.route("/partidosMesas", methods=['GET'])
 def partidosMesas():
     respuesta = controlador.getPartidosDetalleMesa()
-    if respuesta is None:
+    if len(respuesta) == 0:
         return "No se cuenta con resultados en el momento", 200
     return jsonify(respuesta), 200
 
 @reportes.route("/partidosParticipacion", methods=['GET'])
 def partidosParticipacion():
     respuesta = controlador.getDistribucionPartidos()
-    if respuesta is None:
+    if len(respuesta) == 0:
         return "No se cuenta con resultados en el momento", 200
     return jsonify(respuesta), 200

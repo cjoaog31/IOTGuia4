@@ -114,7 +114,6 @@ class ControladorRepostes:
             (Candidato.nombre).label('nombre_candidato'), func.sum(ResultadoCandidato.cantidad_votos).label('total_votos'),
             (Partido.nombre).label('partido')).select_from(Partido).join(Candidato).join(ResultadoCandidato).group_by(
             Candidato.nombre, Partido.nombre).order_by(func.sum(ResultadoCandidato.cantidad_votos)).limit(15).subquery()
-        print(subQuery)
         query = db.session.query((subQuery.c.partido).label('partido'), func.sum(subQuery.c.total_votos).label("total_votos")).\
             select_from(subQuery).group_by(subQuery.c.partido, subQuery.c.total_votos).order_by(func.sum(subQuery.c.total_votos).desc())
 
