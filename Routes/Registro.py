@@ -29,8 +29,8 @@ def listar():
 @registro.route("/registros/<id>", methods=['GET'])
 def get(id):
     try:
-        partido = controlador.get(id)
-        return jsonify(partido), 200
+        registroEncontrado = controlador.get(id)
+        return jsonify(registroEncontrado), 200
     except ObjectNotFound as e:
         return str(e), 404
 
