@@ -16,7 +16,7 @@ class Registro(db.Model):
     def __init__(self, data, **kwargs):
         cantidadActual = data["cantidadActual"]
         ingresa = data["ingresa"]
-        sale = data["ingresa"]
+        sale = data["sale"]
 
     def dict_repr(self):
         return {
