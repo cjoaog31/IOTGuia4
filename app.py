@@ -32,6 +32,7 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    dataConfig = loadFileConfig()
-    print("Server running : " + "http://" + dataConfig["url-backend"] + ":" + str(dataConfig["port"]))
-    serve(app, host=dataConfig["url-backend"], port=dataConfig["port"])
+    #dataConfig = loadFileConfig()
+    #print("Server running : " + "http://" + dataConfig["url-backend"] + ":" + str(dataConfig["port"]))
+    #serve(app, host=dataConfig["url-backend"], port=dataConfig["port"])
+    app.run(debug=True)
