@@ -9,7 +9,7 @@ class Registro(db.Model):
     cantidadActual = db.Column(db.Integer, nullable=False)
     ingresa = db.Column(db.Integer, nullable=False)
     sale = db.Column(db.Integer, nullable=False)
-    updateTime = db.Column(db.DateTime(timezone=True), server_default=db.sql.func.now())
+    updateTime = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
 
     omited_attributes = ['query', 'registry', 'metadata', 'id', 'updateTime']
 

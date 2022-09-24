@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_cors import CORS
 import json
@@ -12,7 +14,7 @@ cors = CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://eutkfugswkrajr' \
                                         ':043eb67db576a61f211f1b317483c0558abe3d74f57929d6b34f02ae4cdf2d93@ec2-3-214' \
-                                        '-2-141.compute-1.amazonaws.com:5432/d8jqbih468nvko '
+                                        '-2-141.compute-1.amazonaws.com:5432/d8jqbih468nvko'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 SQLAlchemy(app)
 
@@ -20,7 +22,8 @@ app.register_blueprint(registro)
 
 
 def loadFileConfig():
-    with open('config.json') as f:
+    print(os.getcwd())
+    with open('./config.json') as f:
         data = json.load(f)
     return data
 
