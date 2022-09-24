@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from flask_cors import CORS
 import json
-from waitress import serve
 from db import db
 from Routes.Registro import registro
 from flask_sqlalchemy import SQLAlchemy
