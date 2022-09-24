@@ -14,9 +14,9 @@ class Registro(db.Model):
     omited_attributes = ['query', 'registry', 'metadata', 'id', 'updateTime']
 
     def __init__(self, data, **kwargs):
-        cantidadActual = data["cantidadActual"]
-        ingresa = data["ingresa"]
-        sale = data["sale"]
+        self.cantidadActual = data["cantidadActual"]
+        self.ingresa = data["ingresa"]
+        self.sale = data["sale"]
 
     def dict_repr(self):
         return {
@@ -36,7 +36,7 @@ class Registro(db.Model):
         resultado = []
         for i in inspect.getmembers(Registro):
             if not i[0].startswith('_'):
-                if (not callable(i[1])) and i[0] != 'omited_attributes' and i[0] not in Partido.omited_attributes:
+                if (not callable(i[1])) and i[0] != 'omited_attributes' and i[0] not in Registro.omited_attributes:
                     resultado.append(i[0])
         return resultado
 
